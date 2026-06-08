@@ -7,10 +7,20 @@ description: Rigorous mode prompt optimizer — audits a polished prompt, decide
 
 ## CHANGELOG
 
+**v4.2 — Jun 2026.** Recalibration for Claude Opus 4.8 (released May 28 2026), plus a new RUN SETTINGS recommendation. No structural changes to the workflow; no architecture decision module changes; no lockstep coordination with prompt-architect required.
+
+- **Capability-activation note recalibrated for Opus 4.8 (Step 5).** The "4.7 calibration note" is now the "4.7–4.8 calibration note." 4.8's documented behavior changes — more reliable reasoning-effort calibration at each effort level, better tool triggering (fewer skipped tool calls the task required), improved honesty/anti-confabulation, more consistent instruction-following — narrow where three techniques earn their place, with one technique held deliberately steady:
+  - *Reasoning activation* — split "more thinking" (now native via adaptive thinking + the effort dial) from "specific reasoning structure" (forced alternatives, self-critique, chain-of-verification — still the prompt's job). Generic "think step by step" earns its place even more rarely on 4.8.
+  - *Anti-sycophancy* — held steady, NOT softened further. 4.8's honesty gains concern the model's claims about its own work, not its willingness to push back on the user's framing; on the reflexive-validation axis 4.8 did not improve. Value undiminished.
+  - *Research activation* — narrowed: 4.8's better tool triggering means the scaffold earns its place only where phrasing is ambiguous enough that the model might still not search.
+  - *Epistemic calibration* — smaller marginal value (the model flags uncertainty more natively); the v3 source-material precondition for confidence tags stands unchanged.
+  - *Scope literalism* — reinforced on 4.8 (more obedient / more consistent instruction-following); content unchanged.
+- **RUN SETTINGS recommendation added (new output element; Step 9.5).** The optimizer now returns two operational recommendations alongside the optimized prompt: EFFORT (the 4.8 chat-app dial — low / high / xhigh / max) and RESEARCH (web search / Research mode on or off). Derived from state the workflow already computes (triage band + architecture verdict + reasoning-depth diagnostic) — no new analytical step. Thinking is folded into EFFORT by design: on 4.8, thinking depth *is* the effort dial (adaptive thinking is automatic; manual thinking budgets are unsupported), so a separate "thinking" recommendation would be a category error. RUN SETTINGS is operational metadata only — never inside the optimized prompt code block, present on IN PURVIEW (and a single optional web-search line on BORDERLINE), never on OUT OF PURVIEW. Addresses a real silent-failure mode: an in-prompt "search for X" instruction fails quietly when web search is toggled off.
+
 **v4.1 — May 2026.** Three surgical calibration additions grounded in the Anthropic official prompting guide (and, where convergent, Ruben Hassid's chat-app prompt optimizer). No structural changes; no architecture decision changes; no lockstep coordination with prompt-architect required.
 
 - **`<examples>` elevated to first-class structural tool (Step 6 Branch A).** v4's structural tools list included `<role>`, context-first ordering, `<constraints>`, motivated constraints, `<output_format>`, `<failure_modes>`, `<evaluation_criteria>`, domain-specific tags, and `[bracketed placeholders]` — but omitted `<examples>` as a first-class tool, despite Anthropic identifying examples as "one of the most reliable ways to steer Claude's output format, tone, and structure." Calibration guidance specifies when to add (Creative archetype voice anchoring, Iterative refinement consistency, format-preference cases) and when to skip (generic tasks, no signaled format preference). Addresses an underplayed lever surfaced in the v3 A/B test complex_creative loss (Howard Marks voice diluted by structural scaffolding).
-- **Quote-grounding pattern for long-document tasks (Step 6 Branch A).** Added an explicit structural tool: for prompts loading ≥3K tokens of source material, instruct Claude to extract relevant passages into `<quotes>` tags before reasoning. Per Anthropic's long-context guidance, materially reduces drift and hallucination on document-grounded analytical tasks. Directly relevant to long-document analytical workflows (multi-document research synthesis, annual reports, long transcripts, dense source material that must be analyzed without drift).
+- **Quote-grounding pattern for long-document tasks (Step 6 Branch A).** Added an explicit structural tool: for prompts loading ≥3K tokens of source material, instruct Claude to extract relevant passages into `<quotes>` tags before reasoning. Per Anthropic's long-context guidance, materially reduces drift and hallucination on document-grounded analytical tasks. Directly relevant to multi-document research synthesis (annual reports, long transcripts, and dense source material that must be analyzed without drift).
 - **Scope literalism added to 4.7 calibration note (Step 5).** v4's calibration note covered reasoning, anti-sycophancy, and research activation but omitted 4.7's literal-reading shift. Step 5.5 signal preservation handles most cases operationally; the calibration note now surfaces the principle during capability selection — particularly for keystone prompts where session-wide norms must apply consistently.
 
 Item considered and rejected for v4.1: tag-framing preference rule (prefer `<evaluation_criteria>` over `<failure_modes>` when equally precise). Scored 40% against a ~60% threshold — operates at wrong altitude (tag name vs. content framing), already covered by the "tags earn their place" principle, no evidence basis. Logged for revisit only if a future A/B test surfaces tag-framing as a failure mode.
@@ -26,7 +36,7 @@ v4 fixes this by promoting the architecture decision from an implicit downstream
 
 The architecture decision is governed by seven named signals (four primary, three amplifying) with explicit guards against over-recommending chain. The verdict, signals fired, and Project-vs-flat sub-decision are always named — the recommendation is falsifiable, not aesthetic.
 
-**v3 — Apr 2026.** Fixes three real bugs surfaced by a 20-prompt A/B test (Apr 2026):
+**v3 — Apr 2026.** Fixes three real bugs surfaced by a 20-prompt A/B test:
 
 - **Signal preservation** (new Step 5.5, formerly 4.5). The single largest skill-level failure mode in v2 was *structural overwrite of raw-prompt signals*. The optimizer wrapped unfilled placeholders (`[CV]`, `[JD]`) as if material were present; converted ambiguous hints ("I have a draft to share") into locked workflows; and dropped explicit format directives ("both analyses side by side") during restructuring. Step 5.5 enumerates every signal in the raw prompt before any restructuring and requires each to be preserved or explicitly overridden with rationale.
 - **Feasibility pass** (revised Step 7, formerly 6). The old step asked only "what could we add?" It never asked "what would crash the turn if we added it?" The revised step runs explicit checks — output budget, context-dependency honesty, user-format preservation, input-presence — and is allowed to *cut* the optimization rather than only extend it.
@@ -110,7 +120,7 @@ Return exactly this, and nothing else:
 >
 > **Surgical note (optional, only if genuinely missing):** [one sentence naming the single missing element, if any — typically a date, audience, or length spec. If nothing is missing, write "None — send as is."]
 >
-> That is the entire response. Do NOT add a diagnostic table, archetype detection, architecture decision, XML scaffolding, change log, feasibility check, or use case guidance. Doing so defeats the purpose of the triage.
+> That is the entire response. Do NOT add a diagnostic table, archetype detection, architecture decision, XML scaffolding, change log, feasibility check, run settings recommendation, or use case guidance. Doing so defeats the purpose of the triage.
 
 **Self-check before finalizing Path A.** If your surgical note names 2 or more distinct gaps (e.g., "you need to specify X, Y, and Z"), the triage miscalled. A prompt with 2+ real gaps is BORDERLINE by the skill's own definition. Re-classify and route to Path B. Path A is only valid when the prompt is genuinely one-gap-or-less from ready.
 
@@ -127,7 +137,7 @@ The original prompt with surgical additions — typically 1 to 3 added sentences
 **SECTION 3 — CHANGE LOG**
 Two to four bullets. Each names what changed and why, in plain language. No diagnostic dimension tags — they don't earn their place here.
 
-No feasibility check, no use case guidance, no architecture decision. BORDERLINE outputs aren't the kind of thing that has either a ceiling or an architecture question.
+No feasibility check, no use case guidance, no architecture decision, no effort recommendation. BORDERLINE outputs aren't the kind of thing that has either a ceiling or an architecture question, and the default effort level is always right for them. The one permitted addition: if the task genuinely needs current information and would fail silently with web search off, append a single line — "Run with web search on." Nothing more.
 
 ### Path C — IN PURVIEW output format (the full rigorous treatment)
 
@@ -266,12 +276,13 @@ Score these dimensions only when the architecture is CHAIN.
 
 ### 5. Capability activation layer
 
-**4.7 calibration note.** Claude 4.7 has raised the floor on three techniques below — reasoning activation, anti-sycophancy, and research activation. The model now decomposes on genuinely hard analytical tasks by default, pushes back more readily on weak premises, and searches more aggressively on present-tense factual questions. This does not make these techniques obsolete. It makes their application more selective:
+**4.7–4.8 calibration note.** Claude 4.7 raised the floor on the techniques below; Claude Opus 4.8 (May 2026) raised it further. 4.8's documented behavior changes — more reliable reasoning-effort calibration at each effort level, better tool triggering (fewer skipped tool calls the task required), improved honesty/anti-confabulation, and more consistent instruction-following — do not make these techniques obsolete. They make their application more selective. The bar for "earns its place" rises with each model release: apply the technique to the residual gap the model does not yet cover by default, not to the whole task.
 
-- **Reasoning activation** now earns its place primarily when the task's *surface difficulty understates its actual difficulty* — analytical questions disguised as simple ones, strategic decisions phrased as lookups, tradeoff problems framed as "just tell me which." The default decomposition behavior covers obviously-hard tasks; the scaffold covers tasks where Claude might otherwise answer shallowly.
-- **Anti-sycophancy permissions** are now a *reinforcement* of default behavior rather than a *reversal* of it. Still valuable on evaluation, critique, and decision-support tasks — especially where the user's framing is subtly flawed in ways the model might work around rather than flag. Effect size is smaller than it was on 4.5 and earlier.
-- **Research activation** now earns its place when the prompt's phrasing wouldn't naturally trigger search — "what should I think about X" vs. "what is the latest on X," or tasks where the user would benefit from current grounding but hasn't signaled it. Where the question is already present-tense factual, the model will search anyway.
-- **Scope literalism (new in v4.1)** — 4.7 interprets prompts more literally than prior models and will not silently generalize an instruction from one item to another. Where the optimized prompt requires Claude to apply something broadly, state the scope explicitly ("apply this to every section, not just the first one"; "use this voice for the full piece, not just the opening"). Step 5.5 signal preservation handles most format-directive cases operationally; this note ensures the principle is visible during capability selection, particularly for keystone prompts where session-wide norms must apply consistently across many turns.
+- **Reasoning activation.** Separate two things 4.8 has pulled apart. *More thinking* is now native and user-controlled: adaptive thinking engages automatically on genuinely hard turns, and the effort dial (see Step 9.5, RUN SETTINGS) is the depth control — so a generic "think step by step" instruction earns its place even more rarely than on 4.7. *A specific reasoning structure* is still the prompt's job: forced alternative-generation, an explicit self-critique pass, chain-of-verification on numerical claims. Add the structure, not the volume. The scaffold earns its place primarily where the task's *surface difficulty understates its actual difficulty* — analytical questions disguised as simple ones, tradeoff problems framed as "just tell me which."
+- **Anti-sycophancy permissions.** Hold this one steady — do NOT soften it further for 4.8. 4.8's honesty improvements concern the model's claims about *its own work* (not asserting unsupported progress), a different axis from what this technique targets: pushing back on the *user's framing*. On the reflexive-validation axis the model has not improved. So anti-sycophancy permission remains fully valuable on evaluation, critique, and decision-support tasks — especially where the user's premise is subtly flawed in ways the model might work around rather than flag.
+- **Research activation.** Narrowed on 4.8. Better tool triggering means the model is less likely to skip a search the task required, so the scaffold earns its place only where the prompt's phrasing wouldn't naturally trigger search — "what should I think about X" vs. "what is the latest on X" — or where current grounding would help but the user hasn't signaled it. The graceful-degradation logic below (search-less runtimes) is unchanged. Note that whether search is *available* is a runtime/UI condition — surface it in RUN SETTINGS (Step 9.5), don't only bury it in the prompt.
+- **Epistemic calibration.** Smaller marginal value on 4.8 — the model flags what it would double-check more readily on its own, so the "state what you know vs. infer, and name what you'd need to verify" instruction now reinforces rather than installs. The v3 precondition stands unchanged: confidence tags require supplied source material or they become hallucination licenses (see the Epistemic calibration tool below).
+- **Scope literalism.** Reinforced on 4.8, not weakened — more consistent, more literal instruction-following means the model is even less likely to silently generalize an instruction from one item to another. Where the optimized prompt requires Claude to apply something broadly, state the scope explicitly ("apply this to every section, not just the first one"; "use this voice for the full piece, not just the opening"). Step 5.5 signal preservation handles most format-directive cases operationally; this note keeps the principle visible during capability selection, particularly for keystone prompts where session-wide norms must hold across many turns.
 
 The other capability techniques — epistemic calibration, pushback permission, working principles, self-critique — are unchanged in their value. Apply all techniques where they earn their place, not where they're traditionally expected.
 
@@ -349,7 +360,7 @@ Produce a single optimized prompt in a code block.
 - `<failure_modes>` describing what bad output looks like
 - `<evaluation_criteria>` defining what good output looks like
 - `<examples>` (new in v4.1) — when the user has a preference about *how* the output should look (voice, tone, structure, format), include 2–4 worked examples in `<examples>` / `<example>` tags. Examples beat description for steering format; this is among the most reliable structural moves per Anthropic's official prompting guidance. Especially load-bearing for the **Creative archetype** (voice anchoring — addresses the v3 A/B-test complex_creative loss), **Iterative refinement** (consistency lock across runs), and any task where Step 5.5 signal (a) flagged a format preference that description alone can't fully resolve. Skip when the task is generic enough that examples would over-constrain, or when no format preference exists to anchor against. Examples must be relevant (mirror the actual use case), diverse (cover edge cases), and structured (each wrapped in `<example>`).
-- **Quote-grounding for long-document tasks** (new in v4.1) — when the prompt loads ≥3K tokens of source material that Claude must analyze (annual reports, long transcripts, multi-document reference sets, dense source material that must be analyzed without drift), instruct Claude to first extract the relevant passages into `<quotes>` tags and ground subsequent reasoning in those quotes. Per Anthropic's long-context guidance, this materially reduces drift and hallucination on document-grounded analytical tasks. Distinct from context-first ordering, which is about *position*; quote-grounding is about *forcing extraction before reasoning*. Skip for short reference material where the extraction step costs more than the grounding benefit, or when context-first ordering alone is sufficient.
+- **Quote-grounding for long-document tasks** (new in v4.1) — when the prompt loads ≥3K tokens of source material that Claude must analyze (annual reports, long transcripts, multi-document reference sets, other dense source material), instruct Claude to first extract the relevant passages into `<quotes>` tags and ground subsequent reasoning in those quotes. Per Anthropic's long-context guidance, this materially reduces drift and hallucination on document-grounded analytical tasks. Distinct from context-first ordering, which is about *position*; quote-grounding is about *forcing extraction before reasoning*. Skip for short reference material where the extraction step costs more than the grounding benefit, or when context-first ordering alone is sufficient.
 - Domain-specific tags where they add precision
 - `[bracketed placeholders]` for variable content — ONLY where the user has actual variable content to substitute. Do not invent placeholders the raw prompt did not carry.
 
@@ -435,6 +446,26 @@ For SINGLE-TURN deliverables: state **what single-turn output to expect from thi
 
 For CHAIN deliverables: state the operational flow (open chat, type X, answer Y, trigger s1 / s2 / s3), the expected output of each stage, where the methodology checkpoint sits, and any maintenance notes for editing stages independently.
 
+### 9.5 Run settings recommendation (effort + research) — new in v4.2
+
+Operational metadata that ships *with* the optimized prompt but never inside it — you cannot set the effort dial or the web-search toggle from inside a prompt on claude.ai. Two recommendations, derived from state the workflow already computed (triage band + Step 3 architecture verdict + the reasoning-depth / research diagnostic), so this adds no new analytical step.
+
+**EFFORT.** On Opus 4.8 the chat-app effort dial sits next to the model selector; canonical levels are low / high (default) / xhigh ("extra") / max. It controls how deeply the model reasons before answering. Map it to the work:
+- IN PURVIEW, single-turn → **high**, escalating to **xhigh** when reasoning depth or capability activation is the binding diagnostic constraint (the dimensions you scored lowest are the capability ones, not the structural ones).
+- IN PURVIEW (CEILING) / multi-framework / heavy synthesis → **xhigh**. Recommend **max** only with the caveat that it is diminishing returns and burns the rate-limit cap faster — reserve it for the genuinely hardest single prompts.
+- CHAIN → per stage. Gather/research stages run **high**; synthesis, evaluation, and critique stages run **xhigh**. State the per-stage effort in the chain's run guidance.
+
+Do not recommend a separate "thinking" control. On 4.8 thinking depth *is* the effort dial: adaptive thinking engages automatically per turn, and manual thinking budgets are unsupported. A "turn on thinking" recommendation is a category error — fold it into EFFORT.
+
+**RESEARCH.** Whether to enable web search / Research mode before running. Same detection as the Step 5 research-activation technique:
+- If the optimized prompt contains an in-prompt search instruction, RESEARCH is **on** — and say so explicitly, because an in-prompt "search for X" fails silently when the web-search toggle is off. This is the failure mode the line exists to prevent.
+- If the task is heavy enough to warrant deep Research mode (multi-source synthesis, current-landscape scans), recommend it by name.
+- If the task needs no external grounding, RESEARCH is **off** — say "web search not needed" or omit.
+
+**Label caveat.** Use the canonical level names; note that the consumer UI may present the same control as a "Faster ↔ Smarter"-style slider rather than named levels, and that effort *amplifies* the prompt — it does not fix a vague one.
+
+Keep the whole block to ≤2 lines in single-turn outputs. It is a recommendation, not a configuration the skill controls.
+
 ---
 
 ## IN PURVIEW output formats
@@ -470,7 +501,10 @@ The feasibility checks from Step 7 Branch A and their verdicts. Explicit stateme
 **SECTION 7 — CHANGE LOG**
 A concise list of changes, each tagged with the diagnostic dimension, capability technique, preserved signal, architecture signal, or feasibility correction it addresses.
 
-**SECTION 8 — USE CASE GUIDANCE**
+**SECTION 8 — RUN SETTINGS**
+The effort and research recommendation per Step 9.5, ≤2 lines: the effort level with a one-clause rationale tied to the diagnostic, and whether to enable web search / Research mode (state it explicitly if the optimized prompt contains an in-prompt search instruction).
+
+**SECTION 9 — USE CASE GUIDANCE**
 When to use this prompt, when not to, what it pairs with, what single-turn output to expect, and (for keystone prompts) what to expect from the session.
 
 ### Path C2 — CHAIN output format
@@ -529,8 +563,8 @@ Per-stage feasibility table + cross-chain verdict (Step 7 Branch B).
 **SECTION 9 — CHANGE LOG**
 The standard change log plus the architectural change log (Step 8).
 
-**SECTION 10 — USE CASE GUIDANCE**
-Operational flow for the chain, expected output per stage, checkpoint locations, and maintenance notes.
+**SECTION 10 — RUN SETTINGS & USE CASE GUIDANCE**
+Run settings per Step 9.5: per-stage effort (gather/research stages high; synthesis, evaluation, and critique stages xhigh) and whether web search / Research mode should be on for the stages that need external grounding. Then the operational flow for the chain, expected output per stage, checkpoint locations, and maintenance notes.
 
 ---
 
@@ -552,6 +586,9 @@ Operational flow for the chain, expected output per stage, checkpoint locations,
 - Never produce a chain when the signals don't justify it. Single-turn is the default; chain has to earn it.
 - Never produce a single-turn prompt when 2+ primary chain signals fired, even if a single-turn prompt is technically deliverable.
 - Always name the architecture signals that fired. An unnamed verdict is unfalsifiable.
+- RUN SETTINGS is operational metadata, never prompt content — it must never appear inside the optimized prompt code block. It appears on IN PURVIEW outputs and (as a single optional web-search line) on BORDERLINE; never on OUT OF PURVIEW.
+- Never recommend a separate "thinking" control. On Opus 4.8 thinking depth is the effort dial (adaptive thinking is automatic; manual thinking budgets are unsupported). Fold thinking into the EFFORT recommendation.
+- The effort recommendation must be derived from the triage band, architecture verdict, and reasoning-depth diagnostic — never an arbitrary or reflexively-maximal level. Recommending max by reflex is the effort-equivalent of cargo-culting capability techniques.
 
 ---
 
@@ -606,6 +643,7 @@ Operational flow for the chain, expected output per stage, checkpoint locations,
 - Result in a prompt that produces measurably better Claude output than the original on the same input
 - Pass the feasibility pass honestly — explicit single-turn or chain framing, no budget-blind scaffolding
 - Name the architecture verdict explicitly and (for SINGLE-TURN (CEILING)) acknowledge the strain
+- Include a calibrated RUN SETTINGS recommendation (effort + research) derived from the triage band, architecture verdict, and diagnostic — not an arbitrary or reflexively-maximal effort level
 
 **For IN PURVIEW + CHAIN outputs**, a strong optimization will:
 - Justify chain selection with 2+ named primary signals (or 1 primary + 2+ amplifiers with explicit escalation note)
@@ -616,6 +654,7 @@ Operational flow for the chain, expected output per stage, checkpoint locations,
 - For Project-orchestrated chains: orchestrator handles initialization, stage triggers, preconditions, methodology checkpoints, variable overrides, and error states without leaking implementation details to the user
 - Deliver as separate files (`create_file` + `present_files`) when code execution is available
 - Result in a workflow where the user runs the chain with minimum cognitive overhead per execution
+- Specify per-stage run settings — effort per stage, and web search enabled for the stages that need external grounding
 
 **For BORDERLINE outputs**, a strong optimization will:
 - Close 1–3 specific gaps the original left open
@@ -630,4 +669,3 @@ Operational flow for the chain, expected output per stage, checkpoint locations,
 - Be no longer than 5 lines total
 
 The ultimate test for IN PURVIEW: if the user runs the optimized prompt (or chain) as the keystone of a new Claude session, does the session produce output that surprises them with its depth, accuracy, and utility? That's state-of-the-art. For OUT OF PURVIEW, the ultimate test is simpler: did the optimizer get out of the way?
-
