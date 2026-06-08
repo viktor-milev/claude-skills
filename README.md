@@ -12,6 +12,7 @@ Each skill is a self-contained `SKILL.md` file with YAML frontmatter that Claude
 |---|---|
 | [`prompt-optimizer`](./prompt-optimizer) | Rigorous-mode prompt optimizer. Triages inputs (OUT OF PURVIEW / BORDERLINE / IN PURVIEW), decides single-turn vs. chained architecture, and rewrites IN PURVIEW prompts against a 9-dimension diagnostic. |
 | [`prompt-optimizer-flow`](./prompt-optimizer-flow) | Flow-mode prompt optimizer. Turns rough, dictated, stream-of-consciousness input into a finished, paste-ready Claude keystone prompt in a single pass — no placeholders, no clarifying questions, no diagnostic theater. |
+| [`prompt-architect`](./prompt-architect) | Generative counterpart to the optimizers. Classifies a task against a 10-bucket taxonomy, decides single-turn vs. chained architecture, and produces a technique-grounded v1 draft (or a full chain) when you have no prompt written yet. |
 
 ---
 
@@ -40,6 +41,9 @@ The `prompt-optimizer` skill here is the result of a long iteration cycle (A/B t
 
 ### prompt-optimizer-flow
 The rigorous optimizer above assumes you already have a written prompt and the time to audit it. Flow mode is the other half of the same problem: you're dictating, mid-thought, and you want to start a Claude session *now*. Most optimizers break that moment — they interrogate you with clarifying questions, or hand back a template full of `[fill this in]` placeholders that doesn't actually run. Flow mode does the opposite: it strips the dictation noise, infers the intent aggressively, preserves your own voice, and returns a finished, paste-ready keystone prompt in one response. The discipline is in what it refuses to do — no scoring, no change log, no questions — so the prompt lands before the thought is gone.
+
+### prompt-architect
+The two optimizers above both assume a prompt already exists — flow mode drafts one fast, rigorous mode audits one you've written. prompt-architect is the step before either: you have a genuinely complex task and *no* prompt in mind. It runs in reverse — given the problem, it works out which prompting technique and which architecture the task actually calls for. It classifies the task against a 10-bucket taxonomy, then makes a call most optimizers never surface: should this be a single prompt at all, or a staged chain with handoffs and checkpoints? The output is a technique-grounded draft you can run as-is, or hand to prompt-optimizer for a rigorous audit — the generative front end to the same pipeline.
 
 ### More skills coming soon
 The other skills in this repo will follow the same pattern — built for real work, validated before publishing.
