@@ -42,6 +42,12 @@ The other skills in this repo will follow the same pattern — built for real wo
 
 ---
 
+## Maintenance and updates
+
+Each skill is subject to periodic maintenance reviews and updates, as more capable models are being released by Anthropic. Please see the Changelog for further information. Current skills are optimized for Opus 4.8
+
+---
+
 ## License
 
 MIT. Use them, fork them, modify them, ship them in your own tools. Attribution appreciated but not required.
