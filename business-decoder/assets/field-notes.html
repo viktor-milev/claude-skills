@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+  FIELD NOTES — business-decoder HTML report theme.
+  Light, paper-like editorial. Warm ivory ground, near-black warm ink, one muted
+  moss-green accent used ONLY as hairlines / rules / labels (never a large filled block).
+  Unified clean sans for the Claude-chat reading feel — Styrene (Claude's brand sans)
+  named as the lead preference, with Inter and a system stack as self-contained fallbacks.
+  Built to be restful to READ a sit-down memo in.
+
+  HOW TO USE: replace the {{TOKENS}} below. Inject the memo as styled HTML into
+  {{MEMO_BODY}} using these classes — change NO CSS:
+    <section>            one memo section (auto-spaced)
+    h2                   section title (gets the moss underline automatically)
+    .bluf                the 30-Second Version inset card (moss left-border)
+    .anchor              the "In one line, this is the X of Y" line inside .bluf
+    .warning             the up-front WARNING banner (ochre) — omit entirely if fully sourced
+    .term                optional: wrap "(industry term: …)" parentheticals for subtle styling
+    .verdict-tag         optional: a small outlined label for good/mediocre/fragile/too-hard
+    .handoff             the routing-steer line in the verdict section
+  Keep it self-contained: no external fonts, scripts, or assets. Print-friendly.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Decoder — {{COMPANY}}</title>
+<style>
+  :root{
+    --ground:#F6F2E9; --paper:#FCFAF3; --ink:#221F1A; --muted:#6B655A;
+    --moss:#5C6B4C; --moss-soft:rgba(92,107,76,.16); --hair:rgba(34,31,26,.12);
+    --warn-bg:#F2E6C7; --warn-bd:#C39A3F; --warn-ink:#5E4A12;
+    --ui:"Styrene B","Styrene A",Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--ui); font-size:16.5px; line-height:1.62;
+    padding:48px 20px 72px;
+  }
+  .wrap{max-width:720px; margin:0 auto}
+  /* Masthead */
+  header.mast{margin-bottom:30px}
+  .kicker{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--moss); margin:0 0 10px;
+  }
+  h1{
+    font-family:var(--ui); font-weight:600; font-size:30px; line-height:1.18;
+    margin:0 0 8px; letter-spacing:-.01em;
+  }
+  .meta{
+    font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:0;
+    padding-bottom:16px; border-bottom:1px solid var(--moss);
+  }
+  /* Warning banner */
+  .warning{
+    margin:22px 0 4px; padding:12px 16px; background:var(--warn-bg);
+    border:1px solid var(--warn-bd); border-radius:3px; color:var(--warn-ink);
+    font-size:14.5px; line-height:1.5;
+  }
+  .warning b{font-weight:700}
+  /* Sections */
+  section{margin-top:30px}
+  h2{
+    font-family:var(--ui); font-weight:650; font-size:20px; line-height:1.25;
+    margin:0 0 12px; padding-bottom:7px; border-bottom:1px solid var(--hair);
+  }
+  h2::after{ /* short moss tick under each title */
+    content:""; display:block; width:42px; height:2px; background:var(--moss);
+    margin-top:7px; margin-bottom:-9px;
+  }
+  p{margin:0 0 13px}
+  strong{font-weight:650}
+  .term{color:var(--muted); font-style:italic}
+  ul{margin:0 0 13px; padding-left:20px} li{margin:0 0 6px}
+  /* BLUF inset */
+  .bluf{
+    margin:24px 0 6px; padding:18px 20px 14px; background:var(--paper);
+    border:1px solid var(--hair); border-left:3px solid var(--moss); border-radius:3px;
+  }
+  .bluf p{font-size:17px; line-height:1.6}
+  .bluf .anchor{
+    margin-top:10px; padding-top:10px; border-top:1px solid var(--hair);
+    font-family:var(--ui); font-style:italic; font-size:16px; color:var(--ink);
+  }
+  /* Verdict bits */
+  .verdict-tag{
+    display:inline-block; font-family:var(--mono); font-size:11.5px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--moss);
+    border:1px solid var(--moss); border-radius:3px; padding:2px 9px; margin-bottom:10px;
+  }
+  .handoff{
+    margin-top:12px; padding:11px 15px; background:var(--moss-soft);
+    border-radius:3px; font-size:15px;
+  }
+  /* Footer */
+  footer{
+    margin-top:46px; padding-top:14px; border-top:1px solid var(--hair);
+    font-family:var(--mono); font-size:11.5px; color:var(--muted);
+  }
+  a{color:var(--moss)}
+  :focus-visible{outline:2px solid var(--moss); outline-offset:2px}
+  @media print{
+    body{background:#fff; padding:0; font-size:12pt}
+    .bluf,.paper{background:#fff}
+    a{color:var(--ink); text-decoration:none}
+  }
+  @media (max-width:520px){ body{padding:28px 14px 56px} h1{font-size:25px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <p class="kicker">Business Decoder · First-Principles Brief</p>
+    <h1>{{COMPANY}}</h1>
+    <p class="meta">{{META}}</p>
+  </header>
+
+  {{WARNING_BLOCK}}
+
+  <main id="memo">
+    {{MEMO_BODY}}
+  </main>
+
+  <footer>{{FOOTER}}</footer>
+</div>
+</body>
+</html>
