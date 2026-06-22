@@ -3,6 +3,10 @@
 Lean release log. The full, rationale-rich design journal lives in the `## CHANGELOG`
 section inside `SKILL.md`; this file is the headline-level release record.
 
+## v1.7 — June 2026. 
+
+Public release; supersedes private working versions v1.3–v1.6. Headline: a peer-review readability / standalone-memo pass — the council memo now stands on its own for a reader who has neither the advisor responses nor the input dossiers (peer review de-anonymized at presentation, plain-English self-containment mandate, a CIO-to-IC synopsis closing the cross-examination). Folded in from the private line: live IBKR connector grounding for price, options, and held-position context (v1.4); a short-interest/borrow stamp discipline (v1.5–v1.6); and the dark "Slate & Ember" HTML theme (v1.3). Council architecture unchanged — five advisors, blind peer review, chairman synthesis, single-run. Full per-version rationale in the inline CHANGELOG in SKILL.md.
+
 ## v1.2 — June 2026
 
 First public release. A council of five orthogonal advisors — Bear, Bull, Base Rate
