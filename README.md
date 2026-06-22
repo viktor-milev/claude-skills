@@ -83,4 +83,4 @@ MIT. Use them, fork them, modify them, ship them in your own tools. Attribution 
 
 ## Contact
 
-[@bizarcoin](https://x.com/bizarcoin) on X.
+viktor.milev@gmail.com
