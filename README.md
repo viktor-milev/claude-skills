@@ -1,6 +1,6 @@
 # claude-skills
 
-A small library of [Claude skills](https://www.anthropic.com/news/skills) I've built and validated for my own work, published openly.
+A library of [Claude skills](https://www.anthropic.com/news/skills) I've built and validated for my own work, published openly.
 
 Each skill is a self-contained `SKILL.md` file with YAML frontmatter that Claude loads on demand. Drop the folder into your skills directory and Claude will pick it up.
 
