@@ -12,9 +12,11 @@ Each skill is a self-contained `SKILL.md` file with YAML frontmatter that Claude
 
 | Skill | What it does |
 |---|---|
-| [`prompt-optimizer`](./prompt-optimizer) | Rigorous-mode prompt optimizer. Triages inputs (OUT OF PURVIEW / BORDERLINE / IN PURVIEW), decides single-turn vs. chained architecture, and rewrites IN PURVIEW prompts against a 9-dimension diagnostic. |
-| [`prompt-optimizer-flow`](./prompt-optimizer-flow) | Flow-mode prompt optimizer. Turns rough, dictated, stream-of-consciousness input into a finished, paste-ready Claude keystone prompt in a single pass — no placeholders, no clarifying questions, no diagnostic theater. |
-| [`prompt-architect`](./prompt-architect) | Generative counterpart to the optimizers. Classifies a task against a 10-bucket taxonomy, decides single-turn vs. chained architecture, and produces a technique-grounded v1 draft (or a full chain) when you have no prompt written yet. |
+| [`prompt-optimizer`](./prompt-optimizer) | Rigorous-mode prompt optimizer. Triages inputs (OUT OF PURVIEW / BORDERLINE / IN PURVIEW), decides single-turn vs. chained architecture, and rewrites IN PURVIEW prompts against a 9-dimension diagnostic. Calibrated for Claude Opus 4.8. |
+| [`prompt-optimizer-flow`](./prompt-optimizer-flow) | Flow-mode prompt optimizer. Turns rough, dictated, stream-of-consciousness input into a finished, paste-ready Claude keystone prompt in a single pass — no placeholders, no clarifying questions, no diagnostic theater. Calibrated for Claude Opus 4.8. |
+| [`prompt-architect`](./prompt-architect) | Generative counterpart to the optimizers. Classifies a task against a 10-bucket taxonomy, decides single-turn vs. chained architecture, and produces a technique-grounded v1 draft (or a full chain) when you have no prompt written yet. Calibrated for Claude Opus 4.8. |
+| [`prompt-optimizer-fable`](./prompt-optimizer-fable) | Fable 5 edition of the rigorous-mode optimizer. The same triage and single-turn-vs-chain architecture engine as `prompt-optimizer`, recalibrated for Claude Fable 5 — Fable effort ladder, surface-aware run settings, a merged Fable capability layer, and a reasoning-echo guard. Fires only on explicit Fable invocation. |
+| [`prompt-architect-fable`](./prompt-architect-fable) | Fable 5 edition of the generative architect. The same 10-bucket taxonomy and architecture decision as `prompt-architect`, plus an interactive-vs-agentic execution-mode overlay and Fable-calibrated technique stacks. Fires only on explicit Fable invocation. |
 
 ### Investment
 
@@ -56,6 +58,9 @@ The rigorous optimizer above assumes you already have a written prompt and the t
 #### prompt-architect
 The two optimizers above both assume a prompt already exists — flow mode drafts one fast, rigorous mode audits one you've written. prompt-architect is the step before either: you have a genuinely complex task and *no* prompt in mind. It runs in reverse — given the problem, it works out which prompting technique and which architecture the task actually calls for. It classifies the task against a 10-bucket taxonomy, then makes a call most optimizers never surface: should this be a single prompt at all, or a staged chain with handoffs and checkpoints? The output is a technique-grounded draft you can run as-is, or hand to prompt-optimizer for a rigorous audit — the generative front end to the same pipeline.
 
+#### prompt-optimizer-fable and prompt-architect-fable (Fable 5 variants)
+Anthropic's Claude Fable 5 rewards a different prompting discipline than Opus does. Its instruction-following is strong enough that instruction density carried over from earlier models actively degrades output; reasoning depth is adaptive and set by an effort control rather than by prompt phrasing; and a few habits that were merely wasteful before — chiefly any instruction to echo internal reasoning — now carry a real refusal risk. Rather than bend the Opus skills with model-detection branches, these two are standalone forks: the same triage, architecture, and taxonomy engines, with the capability layers re-derived against Anthropic's Fable 5 guidance. They fire only on explicit Fable invocation, so the Opus originals stay the default. The optimizer fork adds surface-aware run settings across chat, Claude Code, Cowork, and harness; the architect fork adds an interactive-vs-agentic execution-mode overlay. The two share one architecture-decision module, kept in lockstep.
+
 ### Investment
 
 #### business-decoder
@@ -71,7 +76,7 @@ The other skills in this repo will follow the same pattern — built for real wo
 
 ## Maintenance and updates
 
-Each skill is subject to periodic maintenance reviews and updates, as more capable models are being released by Anthropic. Please see the Changelog for further information. Current skills are optimized for Opus 4.8
+Each skill is subject to periodic maintenance reviews and updates, as more capable models are being released by Anthropic. Please see the Changelog for further information. The prompting and investment skills are calibrated for Claude Opus 4.8; the two `-fable` prompting skills are calibrated for Claude Fable 5.
 
 ---
 
@@ -83,4 +88,4 @@ MIT. Use them, fork them, modify them, ship them in your own tools. Attribution 
 
 ## Contact
 
-viktor.milev@gmail.com
+[@bizarcoin](https://x.com/bizarcoin) on X.
