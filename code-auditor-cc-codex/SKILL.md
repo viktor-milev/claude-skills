@@ -3,10 +3,10 @@ name: code-auditor-cc-codex
 description: Cross-model coding workflow for a user who cannot read code. Use Codex (GPT-5.6-sol) as an ADVERSARIAL AUDITOR of code written by Fable/Opus — and later as an executor for heavy implementation. Invoke at the start of any coding session that should get an independent second-model review. Triggers include "fable-gpt", "audit this with Codex", "adversarial review", "have Codex check this", "cross-model review". Do NOT trigger outside Claude Code (requires the codex-plugin-cc plugin and an authenticated Codex CLI), for non-coding requests, or before any implementation exists to audit.
 ---
 
-# Fable-GPT: Codex as adversarial auditor
+# code-auditor-cc-codex: Codex as adversarial auditor
 
 ## Why this exists
-The user has **no coding experience and cannot read the code themselves**. A second, independently-trained model reviewing the code that Fable/Opus writes IS their code review. Different model lineage → different blind spots. Without it, every line ships on one model family's self-assessment. Treat the Codex audit as a required gate, not a nicety.
+Assume a user has **no coding experience and cannot read the code themselves**. A second, independently-trained model reviewing the code that Fable/Opus writes IS their code review. Different model lineage → different blind spots. Without it, every line ships on one model family's self-assessment. Treat the Codex audit as a required gate, not a nicety.
 
 ## Roles
 - **Fable / Opus (you):** author, orchestrator, and *final* reviewer. You write the code, run the Codex audit, translate and verify the findings, fix, and re-audit. You own the final call.
