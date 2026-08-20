@@ -1,5 +1,5 @@
 ---
-name: fable-gpt
+name: code-auditor-cc-codex
 description: Cross-model coding workflow for a user who cannot read code. Use Codex (GPT-5.6-sol) as an ADVERSARIAL AUDITOR of code written by Fable/Opus — and later as an executor for heavy implementation. Invoke at the start of any coding session that should get an independent second-model review. Triggers include "fable-gpt", "audit this with Codex", "adversarial review", "have Codex check this", "cross-model review". Do NOT trigger outside Claude Code (requires the codex-plugin-cc plugin and an authenticated Codex CLI), for non-coding requests, or before any implementation exists to audit.
 ---
 
